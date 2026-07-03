@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex — استشارات الأعمال</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1B2A;
+    --navy-mid: #1A2F47;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --cream: #F8F4EC;
+    --cream-dark: #EDE8DC;
+    --text-dark: #1A1A1A;
+    --text-mid: #4A4A4A;
+    --text-muted: #7A7A7A;
+    --white: #FFFFFF;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-weight: 400;
+    color: var(--text-dark);
+    background: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 4rem;
+    background: rgba(13, 27, 42, 0.97);
+    backdrop-filter: blur(8px);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  .logo span { color: var(--white); }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem;
+  }
+
+  nav ul a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  nav ul a:hover { color: var(--gold); }
+
+  .nav-cta {
+    background: var(--gold);
+    color: var(--navy) !important;
+    padding: 0.5rem 1.25rem;
+    border-radius: 2px;
+    font-weight: 500 !important;
+    transition: background 0.2s !important;
+  }
+
+  .nav-cta:hover { background: var(--gold-light) !important; color: var(--navy) !important; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 4rem;
+    padding-top: 5rem;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .hero-subtitle {
+    font-size: 1.125rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.8;
+    max-width: 560px;
+    margin-bottom: 3rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+    padding: 0.875rem 2rem;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary:hover { background: var(--gold-light); }
+
+  .btn-ghost {
+    color: rgba(255,255,255,0.7);
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  .btn-ghost:hover { color: var(--white); }
+
+  .hero-stats {
+    display: flex;
+    gap: 4rem;
+    margin-top: 6rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 0.4rem;
+    letter-spacing: 1px;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--cream);
+    padding: 8rem 4rem;
+  }
+
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-right: 2px solid var(--gold);
+    padding-right: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    margin-top: 4rem;
+  }
+
+  .about-text p {
+    font-size: 1rem;
+    color: var(--text-mid);
+    line-height: 1.9;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-visual {
+    position: relative;
+  }
+
+  .about-box {
+    background: var(--navy);
+    padding: 3rem;
+    border-radius: 4px;
+    position: relative;
+  }
+
+  .about-box::before {
+    content: '';
+    position: absolute;
+    top: -12px; right: -12px;
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    z-index: -1;
+  }
+
+  .about-box-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--white);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-box-author {
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* ── SERVICES ── */
+  #services {
+    background: var(--white);
+    padding: 8rem 4rem;
+  }
+
+  .services-header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--cream-dark);
+    border: 1.5px solid var(--cream-dark);
+  }
+
+  .service-card {
+    background: var(--white);
+    padding: 3rem 2.5rem;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 0; height: 3px;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+
+  .service-card:hover { background: var(--cream); }
+  .service-card:hover::after { width: 100%; }
+
+  .service-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--cream-dark);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    transition: color 0.3s;
+  }
+
+  .service-card:hover .service-num { color: var(--gold-light); }
+
+  .service-name {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 1rem;
+  }
+
+  .service-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  /* ── PROCESS ── */
+  #process {
+    background: var(--navy);
+    padding: 8rem 4rem;
+  }
+
+  #process .section-title { color: var(--white); }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 5rem;
+    position: relative;
+  }
+
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 1.75rem;
+    right: calc(12.5% + 1.5rem);
+    left: calc(12.5% + 1.5rem);
+    height: 1px;
+    background: rgba(201,168,76,0.3);
+  }
+
+  .step {
+    text-align: center;
+    padding: 0 1.5rem;
+    position: relative;
+  }
+
+  .step-circle {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    background: var(--navy);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--gold);
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+
+  .step-desc {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.7;
+  }
+
+  /* ── TESTIMONIALS ── */
+  #testimonials {
+    background: var(--cream);
+    padding: 8rem 4rem;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .testimonial-card {
+    background: var(--white);
+    padding: 2.5rem;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .testimonial-card:hover { border-color: var(--gold); }
+
+  .testimonial-quote {
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    line-height: 1.9;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .author-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--navy);
+  }
+
+  .author-role {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+  }
+
+  /* ── CTA ── */
+  #cta {
+    background: var(--navy);
+    padding: 8rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #cta::before {
+    content: 'APEX';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 20rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.02);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  #cta .section-title {
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-subtitle {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    padding: 0.875rem 2rem;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #07111C;
+    padding: 3rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  footer .logo { font-size: 1.25rem; }
+
+  .footer-text {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.25rem 1.5rem; }
+    nav ul { display: none; }
+    #hero, #about, #services, #process, #testimonials, #cta, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .process-steps::before { display: none; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 2rem; flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Apex<span>.</span></div>
+  <ul>
+    <li><a href="#about">من نحن</a></li>
+    <li><a href="#services">خدماتنا</a></li>
+    <li><a href="#process">منهجيتنا</a></li>
+    <li><a href="#testimonials">آراء العملاء</a></li>
+    <li><a href="#cta" class="nav-cta">تواصل معنا</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">استشارات استراتيجية</div>
+    <h1 class="hero-title">
+      نحوّل رؤيتك<br>إلى <em>نتائج حقيقية</em>
+    </h1>
+    <p class="hero-subtitle">
+      نساعد الشركات الطموحة على تجاوز التحديات المعقدة، وبناء استراتيجيات نمو متينة، وتحقيق قفزات مستدامة في الأداء.
+    </p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">ابدأ معنا اليوم</a>
+      <a href="#services" class="btn-ghost">اكتشف خدماتنا ←</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">+150</div>
+        <div class="stat-label">مشروع منجز</div>
+      </div>
+      <div>
+        <div class="stat-num">18</div>
+        <div class="stat-label">سنة خبرة</div>
+      </div>
+      <div>
+        <div class="stat-num">94%</div>
+        <div class="stat-label">رضا العملاء</div>
+      </div>
+      <div>
+        <div class="stat-num">12</div>
+        <div class="stat-label">دولة نعمل فيها</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <span class="section-tag">من نحن</span>
+    <h2 class="section-title">شركاء النجاح،<br>لا مجرد مستشارين</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          تأسست Apex على قناعة راسخة: الاستشارة الحقيقية لا تنتهي عند تقديم التقرير. نحن نتشارك معك في كل مرحلة من مراحل التنفيذ، ونقيس نجاحنا بنجاحك الفعلي على أرض الواقع.
+        </p>
+        <p>
+          يضم فريقنا نخبة من المختصين بخبرات في الاستراتيجية والتحول الرقمي وإدارة التغيير والتمويل، مع فهم عميق للسوق العربية وديناميكياتها الخاصة.
+        </p>
+        <a href="#services" class="btn-primary" style="display:inline-block; margin-top:0.5rem;">استكشف تخصصاتنا</a>
+      </div>
+      <div class="about-visual">
+        <div class="about-box">
+          <p class="about-box-quote">"لا نؤمن بالحلول الجاهزة. كل شركة فريدة، وتستحق استراتيجية مصمّمة خصيصاً لها."</p>
+          <div class="about-box-author">— خالد المنصور، المدير التنفيذي</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-inner">
+    <div class="services-header">
+      <span class="section-tag">خدماتنا</span>
+      <h2 class="section-title">نخصصنا في ما يهم<br>أكثر لأعمالك</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-num">01</div>
+        <div class="service-name">الاستراتيجية والنمو</div>
+        <p class="service-desc">نصمم خرائط طريق واضحة لتحقيق أهدافك البعيدة المدى، مع تحديد الفرص الحقيقية وترتيب الأولويات بدقة.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">02</div>
+        <div class="service-name">التحول الرقمي</div>
+        <p class="service-desc">نرافقك في رحلة التحول من النماذج التقليدية إلى نماذج الأعمال الرقمية القادرة على المنافسة في السوق الحديث.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">03</div>
+        <div class="service-name">إعادة الهيكلة التشغيلية</div>
+        <p class="service-desc">نحلل عملياتك من الجذر، ونُعيد بناءها لتقليل التكاليف وتعظيم الكفاءة دون المساس بجودة المخرجات.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">04</div>
+        <div class="service-name">الاندماج والاستحواذ</div>
+        <p class="service-desc">من العناية الواجبة إلى الدمج الكامل، نضمن أن كل صفقة تُضيف قيمة حقيقية وتتجاوز مخاطرها المحتملة.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">05</div>
+        <div class="service-name">تطوير القيادة</div>
+        <p class="service-desc">نبني قدرات فرق الإدارة العليا وننمي الجيل القادم من القادة الذين سيقودون شركتك للأمام.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">06</div>
+        <div class="service-name">إدارة المخاطر</div>
+        <p class="service-desc">نضع أطر عمل متكاملة لاستشراف المخاطر ومعالجتها قبل أن تتحول إلى عقبات تُكبّل نمو شركتك.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-inner">
+    <span class="section-tag" style="border-right-color: var(--gold); color: var(--gold);">منهجيتنا</span>
+    <h2 class="section-title">أربع خطوات نحو<br>التحول الحقيقي</h2>
+    <div class="process-steps">
+      <div class="step">
+        <div class="step-circle">١</div>
+        <div class="step-title">الفهم العميق</div>
+        <p class="step-desc">نغوص في تفاصيل أعمالك، بيئتك، وتحدياتك الفعلية قبل أي توصية.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">٢</div>
+        <div class="step-title">التشخيص الدقيق</div>
+        <p class="step-desc">نُقيّم الوضع الراهن بمنهجية مبنية على البيانات لا على الانطباعات.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">٣</div>
+        <div class="step-title">الحل المُصمَّم</div>
+        <p class="step-desc">نبني استراتيجية مُخصصة لك تماماً، قابلة للتنفيذ ومحددة بمؤشرات واضحة.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">٤</div>
+        <div class="step-title">الشراكة في التنفيذ</div>
+        <p class="step-desc">نبقى إلى جانبك في مرحلة التطبيق ونتابع النتائج حتى تتجذّر التغييرات.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-inner">
+    <span class="section-tag">آراء عملائنا</span>
+    <h2 class="section-title">يتحدث نجاح<br>عملاؤنا بدلاً عنا</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-quote">
+          "رفعت Apex كفاءة عملياتنا بنسبة 40% خلال ستة أشهر فقط. لم يكن ذلك مجرد تقرير — كان تحولاً جذرياً في طريقة عملنا."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">سم</div>
+          <div>
+            <div class="author-name">سارة المطيري</div>
+            <div class="author-role">الرئيس التنفيذي، مجموعة الفجر</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-quote">
+          "ما يميز Apex هو أنهم يفكرون كشركاء حقيقيين، لا كمستشارين خارجيين. فهمهم لسوقنا المحلي كان مفاجئاً ومُقنِعاً."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">أح</div>
+          <div>
+            <div class="author-name">أحمد الحربي</div>
+            <div class="author-role">مدير التطوير، شركة نماء</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-quote">
+          "الاستحواذ الذي أشرفت عليه Apex كان الأكثر سلاسة في تاريخنا. دقتهم في التفاصيل وقدرتهم على إدارة المعقدات لا مثيل لها."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">لع</div>
+          <div>
+            <div class="author-name">لمياء العتيبي</div>
+            <div class="author-role">المدير المالي، الشركة الخليجية للتقنية</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="section-inner">
+    <span class="section-tag" style="color: var(--gold); border-right-color: var(--gold);">ابدأ الآن</span>
+    <h2 class="section-title" style="margin-bottom:1rem;">هل أنت مستعد للمرحلة<br>التالية من نموك؟</h2>
+    <p class="cta-subtitle">تحدث مع أحد خبرائنا مجاناً وتعرّف على كيفية مساعدتك.</p>
+    <div class="cta-actions">
+      <a href="mailto:hello@apex-consulting.com" class="btn-primary">احجز استشارتك المجانية</a>
+      <a href="tel:+966500000000" class="btn-outline">أو اتصل بنا مباشرة</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Apex<span>.</span></div>
+  <div class="footer-text">© 2025 Apex Consulting. جميع الحقوق محفوظة.</div>
+</footer>
+
+</body>
+</html>

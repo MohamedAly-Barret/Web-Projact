@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>صيدليتي | ابحث عن الدواء واعثر على أقرب صيدلية</title>
+    <!-- Google Fonts (Cairo for modern Arabic) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(145deg, #f0f9ff 0%, #e6f0fa 100%);
+            min-height: 100vh;
+            color: #1a2c3e;
+        }
+
+        /* container */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 1rem;
+        }
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0b5e7e, #1e88a8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+        .header p {
+            color: #2c5a6e;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* شريط البحث المركزي */
+        .search-section {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0 2rem;
+        }
+        .search-wrapper {
+            background: white;
+            border-radius: 60px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 650px;
+            transition: all 0.3s ease;
+        }
+        .search-wrapper i {
+            font-size: 1.3rem;
+            color: #1e88a8;
+            padding: 0 1rem;
+        }
+        #searchInput {
+            flex: 1;
+            border: none;
+            padding: 1.1rem 0;
+            font-size: 1.2rem;
+            font-family: 'Cairo', sans-serif;
+            background: transparent;
+            outline: none;
+            font-weight: 500;
+        }
+        #searchInput::placeholder {
+            color: #9bb7c9;
+            font-weight: 400;
+        }
+        .search-btn {
+            background: #1e88a8;
+            border: none;
+            border-radius: 60px;
+            padding: 0.7rem 1.8rem;
+            margin: 0.4rem;
+            color: white;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .search-btn:hover {
+            background: #0f6b87;
+        }
+
+        /* نتائج الأدوية (شبكة صور) */
+        .results-container {
+            margin: 2rem 0;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            border-right: 5px solid #1e88a8;
+            padding-right: 1rem;
+            color: #1f3e48;
+        }
+        .med-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.8rem;
+            justify-items: center;
+        }
+        .med-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            cursor: pointer;
+            width: 100%;
+            max-width: 220px;
+            text-align: center;
+            padding: 1rem 0.8rem 1.2rem;
+            border: 1px solid rgba(30,136,168,0.2);
+        }
+        .med-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.12);
+            border-color: #1e88a8;
+        }
+        .med-img {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 0.8rem;
+            background: #eef2f5;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .med-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #0b5e7e;
+            margin: 0.5rem 0 0.2rem;
+        }
+        .click-hint {
+            font-size: 0.75rem;
+            color: #78a5b8;
+            margin-top: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            background: #fff5e8;
+            border-radius: 50px;
+            color: #d97706;
+            font-weight: 600;
+        }
+
+        /* خريطة جوجل والقسم السفلي */
+        .map-section {
+            margin: 2.5rem 0 1rem;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            padding: 1.2rem;
+            transition: all 0.3s;
+        }
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+        .map-header h3 {
+            font-weight: 700;
+            color: #0f4c5f;
+        }
+        .nearest-info {
+            background: #e1f5fe;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        #map {
+            height: 450px;
+            width: 100%;
+            border-radius: 28px;
+            background-color: #cfdee9;
+        }
+        .map-note {
+            font-size: 0.8rem;
+            color: #547e92;
+            margin-top: 0.7rem;
+            text-align: center;
+        }
+        .btn-reset {
+            background: #eef2f7;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            color: #1e88a8;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-reset:hover {
+            background: #d4e3ed;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            font-size: 0.8rem;
+            color: #648aa0;
+        }
+        @media (max-width: 680px) {
+            .search-wrapper {
+                flex-wrap: wrap;
+                background: transparent;
+                box-shadow: none;
+                gap: 0.5rem;
+            }
+            .search-wrapper i {
+                display: none;
+            }
+            #searchInput {
+                background: white;
+                border-radius: 60px;
+                padding: 0.9rem 1.5rem;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }
+            .search-btn {
+                width: 100%;
+                margin: 0;
+            }
+            .med-grid {
+                gap: 1rem;
+            }
+        }
+    </style>
+    <!-- Google Maps JavaScript API (سيتم تحميلها بشكل غير متزامن) -->
+    <!-- يرجى استبدال YOUR_GOOGLE_MAPS_API_KEY بمفتاح صالح من Google Cloud Console -->
+    <script>
+        // سيتم تعيين المتغير العالمي لخريطة جوجل لاحقًا
+        let googleMap = null;
+        let mapMarkers = [];
+        let mapInitialized = false;
+        let currentUserPosition = null;
+        let pharmacyList = []; // سيتم تعبئتها
+        let activeMedication = null;
+        let isMapLoading = false;
+
+        // قائمة الصيدليات (إحداثيات حقيقية في القاهرة – منطقة وسط البلد)
+        // يمكن تعديلها لتناسب أي مدينة
+        const PHARMACIES_DATA = [
+            { name: "صيدلية النور", lat: 30.0452, lng: 31.2368, address: "شارع طلعت حرب" },
+            { name: "صيدلية الحكيم", lat: 30.0435, lng: 31.2345, address: "ميدان التحرير" },
+            { name: "صيدلية السلام", lat: 30.0470, lng: 31.2380, address: "شارع قصر النيل" },
+            { name: "صيدلية المحبة", lat: 30.0410, lng: 31.2330, address: "شارع عبد الخالق ثروت" },
+            { name: "صيدلية الشفاء", lat: 30.0492, lng: 31.2401, address: "جاردن سيتي" },
+            { name: "صيدلية الدواء", lat: 30.0465, lng: 31.2305, address: "شارع رمسيس" },
+            { name: "صيدلية المستقبل", lat: 30.0510, lng: 31.2425, address: "الزمالك – شارع البرازيل" }
+        ];
+
+        // قائمة الأدوية (اسم الدواء + رابط صورة توضيحية)
+        const MEDICATIONS = [
+            { id: 1, name: "باراسيتامول", image: "https://placehold.co/300x300/9ad0e0/1f4e6c?text=باراسيتامول&font=cairo" },
+            { id: 2, name: "إيبوبروفين", image: "https://placehold.co/300x300/ffb74d/4a2c00?text=إيبوبروفين&font=cairo" },
+            { id: 3, name: "أسبرين", image: "https://placehold.co/300x300/f28b82/4a0e0e?text=أسبرين&font=cairo" },
+            { id: 4, name: "أموكسيسيلين", image: "https://placehold.co/300x300/a5d6a5/1b3b1b?text=أموكسيسيلين&font=cairo" },
+            { id: 5, name: "سيبروفلوكساسين", image: "https://placehold.co/300x300/ffab91/542c1a?text=سيبروفلوكساسين&font=cairo" },
+            { id: 6, name: "لوراتادين", image: "https://placehold.co/300x300/c5e0f0/1e3a5f?text=لوراتادين&font=cairo" },
+            { id: 7, name: "أوميبرازول", image: "https://placehold.co/300x300/e6c3a0/4e3b28?text=أوميبرازول&font=cairo" },
+            { id: 8, name: "فيتامين سي", image: "https://placehold.co/300x300/f9e79f/7d6608?text=Vitamin+C&font=cairo" }
+        ];
+
+        // دالة لحساب المسافة بين نقطتين (Haversine)
+        function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
+            const R = 6371; // km
+            const dLat = deg2rad(lat2 - lat1);
+            const dLon = deg2rad(lon2 - lon1);
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        function deg2rad(deg) { return deg * (Math.PI/180); }
+
+        // إيجاد أقرب صيدلية بناءً على موقع المستخدم
+        function findNearestPharmacy(userLat, userLng) {
+            if (!PHARMACIES_DATA.length) return null;
+            let nearest = PHARMACIES_DATA[0];
+            let minDist = getDistanceFromLatLon(userLat, userLng, nearest.lat, nearest.lng);
+            for (let i = 1; i < PHARMACIES_DATA.length; i++) {
+                const dist = getDistanceFromLatLon(userLat, userLng, PHARMACIES_DATA[i].lat, PHARMACIES_DATA[i].lng);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearest = PHARMACIES_DATA[i];
+                }
+            }
+            return { pharmacy: nearest, distanceKm: minDist };
+        }
+
+        // عرض الخريطة بأقرب صيدلية ومكان المستخدم
+        function showMapWithNearestPharmacy(userLat, userLng) {
+            const nearestResult = findNearestPharmacy(userLat, userLng);
+            if (!nearestResult) {
+                alert("لا توجد صيدليات مسجلة حالياً، يرجى المحاولة لاحقاً.");
+                return;
+            }
+            const { pharmacy, distanceKm } = nearestResult;
+            const distanceFormatted = distanceKm.toFixed(2);
+            // تحديث النص التوضيحي
+            const nearestSpan = document.getElementById("nearestPharmacyName");
+            if (nearestSpan) {
+                nearestSpan.innerHTML = `🏥 أقرب صيدلية: ${pharmacy.name} (${distanceFormatted} كم) - ${pharmacy.address}`;
+            }
+
+            // التأكد من تحميل Google Maps
+            if (typeof google === 'undefined' || !google.maps) {
+                alert("جاري تحميل خرائط جوجل، حاول مجدداً بعد ثانية.");
+                loadGoogleMapsAPI(() => {
+                    initMapWithPosition(userLat, userLng, pharmacy);
+                });
+                return;
+            }
+            initMapWithPosition(userLat, userLng, pharmacy);
+        }
+
+        // تهيئة الخريطة الفعلية
+        function initMapWithPosition(userLat, userLng, pharmacy) {
+            const mapContainer = document.getElementById("map");
+            if (!mapContainer) return;
+            const mapOptions = {
+                center: { lat: userLat, lng: userLng },
+                zoom: 14,
+                mapTypeId: google.maps.MapTypeId.roadmap,
+                mapId: "pharmacy_map",
+                gestureHandling: "cooperative",
+                styles: []
+            };
+            if (googleMap) {
+                // إذا كانت الخريطة موجودة نحدث المركز ونمسح الماركرز
+                googleMap.setCenter({ lat: userLat, lng: userLng });
+                googleMap.setZoom(14);
+                clearMarkers();
+            } else {
+                googleMap = new google.maps.Map(mapContainer, mapOptions);
+            }
+
+            // إضافة ماركر المستخدم
+            const userMarker = new google.maps.Marker({
+                position: { lat: userLat, lng: userLng },
+                map: googleMap,
+                title: "موقعك الحالي",
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 10,
+                    fillColor: "#1e88a8",
+                    fillOpacity: 1,
+                    strokeWeight: 2,
+                    strokeColor: "#ffffff"
+                },
+                label: {
+                    text: "📍 أنت",
+                    color: "#1f3e48",
+                    fontWeight: "bold",
+                    fontSize: "12px"
+                }
+            });
+            mapMarkers.push(userMarker);
+
+            // إضافة ماركر الصيدلية الأقرب
+            const pharmacyMarker = new google.maps.Marker({
+                position: { lat: pharmacy.lat, lng: pharmacy.lng },
+                map: googleMap,
+                title: pharmacy.name,
+                animation: google.maps.Animation.DROP,
+                icon: {
+                    url: "https://maps.google.com/mapfiles/ms/icons/pharmacy.png",
+                    scaledSize: new google.maps.Size(40, 40)
+                },
+                label: {
+                    text: "💊",
+                    fontSize: "16px",
+                    fontWeight: "bold"
+                }
+            });
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<div style="font-family:Cairo; text-align:center; padding:6px;"><strong>${pharmacy.name}</strong><br>📍 ${pharmacy.address}<br>🚶 المسافة: ${distanceKm.toFixed(2)} كم</div>`
+            });
+            pharmacyMarker.addListener("click", () => {
+                infoWindow.open(googleMap, pharmacyMarker);
+            });
+            mapMarkers.push(pharmacyMarker);
+
+            // إضافة خط الرؤية (اختياري: خط مستقيم)
+            const flightPath = new google.maps.Polyline({
+                path: [
+                    { lat: userLat, lng: userLng },
+                    { lat: pharmacy.lat, lng: pharmacy.lng }
+                ],
+                geodesic: true,
+                strokeColor: "#FF9800",
+                strokeOpacity: 0.6,
+                strokeWeight: 2.5,
+                map: googleMap
+            });
+            mapMarkers.push(flightPath); // فقط لتتبع الـ clear لكن polyline ليس ماركر ولكن لسهولة التنظيف
+            // نضعها في مصفوفة منفصلة للخطوط؟ سنقوم بتنظيف الخريطة كلياً عند إعادة التهيئة. 
+            // لإعادة استخدام الخريطة بدون تداخل سنقوم بإعادة تعيين الخريطة كلياً في كل مرة؟ 
+            // لكن الأفضل: عند تهيئة جديدة نمسح الخريطة من الكائنات القديمة.
+        }
+
+        function clearMarkers() {
+            if (googleMap) {
+                // حذف جميع الماركرات والخطوط (لكن نحتاج لتخزين مراجع)
+                // الطريقة الأسهل: إعادة تعيين الخريطة مع الاحتفاظ بالخريطة نفسها لكن إزالة جميع المعالم
+                // لكننا نخزن كل كائن في mapMarkers. قد تحتوي على polylines و markers.
+                for (let i = 0; i < mapMarkers.length; i++) {
+                    if (mapMarkers[i] && mapMarkers[i].setMap) {
+                        mapMarkers[i].setMap(null);
+                    }
+                }
+                mapMarkers = [];
+            }
+        }
+
+        // تحميل Google Maps API ديناميكياً إذا لم تكن محملة
+        function loadGoogleMapsAPI(callback) {
+            if (typeof google !== 'undefined' && google.maps) {
+                callback();
+                return;
+            }
+            const script = document.createElement('script');
+            // 🔴 هام: الرجاء استبدال "YOUR_GOOGLE_MAPS_API_KEY" بمفتاح API صالح
+            const apiKey = "YOUR_GOOGLE_MAPS_API_KEY";
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initGoogleMapsCallback&loading=async&v=weekly&language=ar`;
+            script.async = true;
+            script.defer = true;
+            window.initGoogleMapsCallback = function() {
+                delete window.initGoogleMapsCallback;
+                if (callback) callback();
+            };
+            document.head.appendChild(script);
+        }
+
+        // الدالة الأساسية التي تستدعى عند الضغط على أي دواء
+        function onMedicationClick(medName) {
+            activeMedication = medName;
+            // تفعيل الموقع الجغرافي
+            if (!navigator.geolocation) {
+                alert("المتصفح لا يدعم خاصية تحديد الموقع الجغرافي.");
+                return;
+            }
+            // إظهار رسالة تحميل
+            const mapDiv = document.getElementById("map");
+            mapDiv.style.opacity = "0.6";
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    mapDiv.style.opacity = "1";
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    currentUserPosition = { lat: userLat, lng: userLng };
+                    // عرض الخريطة بأقرب صيدلية
+                    showMapWithNearestPharmacy(userLat, userLng);
+                    // تمرير سلس للمقطع
+                    document.querySelector(".map-section").scrollIntoView({ behavior: "smooth", block: "start" });
+                },
+                (error) => {
+                    mapDiv.style.opacity = "1";
+                    console.error(error);
+                    let errorMsg = "تعذر الحصول على موقعك. ";
+                    if (error.code === 1) errorMsg += "يرجى السماح بتحديد الموقع.";
+                    else if (error.code === 2) errorMsg += "خدمات الموقع غير متاحة مؤقتاً.";
+                    else errorMsg += "حدث خطأ غير متوقع.";
+                    alert(errorMsg);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        // عرض نتائج البحث (الأدوية) في الشبكة
+        function renderMedications(searchTerm = "") {
+            const filtered = MEDICATIONS.filter(med => 
+                med.name.includes(searchTerm) || med.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            const grid = document.getElementById("medGrid");
+            const sectionTitle = document.getElementById("resultsTitle");
+            if (!grid) return;
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="no-results"><i class="fas fa-capsules"></i>  لا توجد أدوية تطابق "${searchTerm}"</div>`;
+                sectionTitle.innerText = "نتائج البحث";
+                return;
+            }
+            sectionTitle.innerText = `✨ النتائج (${filtered.length} دواء)`;
+            grid.innerHTML = filtered.map(med => `
+                <div class="med-card" data-med-name="${med.name}">
+                    <img class="med-img" src="${med.image}" alt="${med.name}" loading="lazy">
+                    <div class="med-name">${med.name}</div>
+                    <div class="click-hint"><i class="fas fa-map-marker-alt"></i> اضغط للعثور على أقرب صيدلية</div>
+                </div>
+            `).join('');
+
+            // إضافة مستمعين للبطاقات
+            document.querySelectorAll('.med-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const medName = card.getAttribute('data-med-name');
+                    onMedicationClick(medName);
+                });
+            });
+        }
+
+        // حدث البحث
+        function performSearch() {
+            const query = document.getElementById("searchInput").value.trim();
+            renderMedications(query);
+        }
+
+        // إعادة تعيين الخريطة وإخفاء البيانات (اختياري)
+        function resetMap() {
+            if (googleMap) {
+                clearMarkers();
+                // إعادة تعيين الخريطة إلى موقع افتراضي (مثلاً وسط القاهرة) مع رسالة
+                googleMap.setCenter({ lat: 30.0444, lng: 31.2357 });
+                googleMap.setZoom(12);
+                const defaultInfo = new google.maps.InfoWindow({
+                    content: "<div style='font-family:Cairo; text-align:center;'>🔍 اختر دواءً لعرض أقرب صيدلية لموقعك</div>"
+                });
+                const tempMarker = new google.maps.Marker({
+                    position: { lat: 30.0444, lng: 31.2357 },
+                    map: googleMap,
+                    visible: false
+                });
+                defaultInfo.open(googleMap, tempMarker);
+                setTimeout(() => defaultInfo.close(), 3000);
+            }
+            document.getElementById("nearestPharmacyName").innerHTML = "⚕️ اختر دواءً لعرض أقرب صيدلية على الخريطة";
+        }
+
+        // حدث تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            // عرض جميع الأدوية أولاً
+            renderMedications("");
+            // إعداد زر البحث
+            const searchBtn = document.getElementById("searchBtn");
+            const searchInput = document.getElementById("searchInput");
+            searchBtn.addEventListener("click", performSearch);
+            searchInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") performSearch();
+            });
+            // إعداد زر إعادة تعيين الخريطة
+            const resetMapBtn = document.getElementById("resetMapBtn");
+            if (resetMapBtn) {
+                resetMapBtn.addEventListener("click", () => {
+                    if (typeof google !== 'undefined' && google.maps && googleMap) {
+                        resetMap();
+                    } else {
+                        alert("الخريطة لم تتهيأ بعد. ابحث عن دواء أولاً.");
+                    }
+                });
+            }
+            // تحميل Google Maps API مسبقاً (لكن بدون تهيئة الخريطة حتى أول استخدام)
+            // وذلك لتسريع التجربة عند الضغط على الدواء
+            loadGoogleMapsAPI(() => {
+                console.log("Google Maps API جاهزة");
+                // إنشاء خريطة افتراضية مؤقتة أو انتظار أول تفعيل
+                if (!googleMap && document.getElementById("map")) {
+                    // تهيئة خريطة فارغة لكن بدون موقع حتى لا تظهر أخطاء
+                    const tempMapDiv = document.getElementById("map");
+                    const tempOptions = {
+                        center: { lat: 30.0444, lng: 31.2357 },
+                        zoom: 13,
+                        disableDefaultUI: false,
+                    };
+                    googleMap = new google.maps.Map(tempMapDiv, tempOptions);
+                    // إضافة رسالة ترحيبية
+                    const welcomeInfo = new google.maps.InfoWindow({
+                        content: "<div style='font-family:Cairo;text-align:center;padding:5px'>🌍 ابحث عن دواء ثم اضغط عليه لمعرفة أقرب صيدلية لك</div>"
+                    });
+                    setTimeout(() => {
+                        if (googleMap) welcomeInfo.open(googleMap);
+                        setTimeout(() => welcomeInfo.close(), 4000);
+                    }, 500);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-hospital-user"></i> صيدليتي الدوائية</h1>
+        <p>ابحث عن الدواء، واكتشف أقرب صيدلية على خرائط جوجل</p>
+    </div>
+
+    <!-- شريط البحث المركزي -->
+    <div class="search-section">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="اكتب اسم العلاج... مثل: باراسيتامول، إيبوبروفين" autocomplete="off">
+            <button class="search-btn" id="searchBtn">بحث <i class="fas fa-arrow-left"></i></button>
+        </div>
+    </div>
+
+    <!-- منطقة عرض الأدوية بالصور -->
+    <div class="results-container">
+        <div class="section-title" id="resultsTitle">💊 جميع الأدوية المتاحة</div>
+        <div id="medGrid" class="med-grid">
+            <!-- سيتم تعبئتها بواسطة JS -->
+        </div>
+    </div>
+
+    <!-- خريطة جوجل وأقرب صيدلية -->
+    <div class="map-section">
+        <div class="map-header">
+            <h3><i class="fas fa-map-marked-alt"></i> أقرب صيدلية لموقعك</h3>
+            <button id="resetMapBtn" class="btn-reset"><i class="fas fa-sync-alt"></i> إعادة تعيين الخريطة</button>
+        </div>
+        <div id="map" style="height: 450px; width: 100%; border-radius: 28px;"></div>
+        <div class="map-note" id="nearestPharmacyName">
+            ⚕️ اختر دواءً من القائمة أعلاه (اضغط على الدواء) — سيتم تفعيل الموقع الجغرافي وعرض أقرب صيدلية لك.
+        </div>
+        <div class="map-note" style="font-size:0.7rem; margin-top: 0.3rem;">
+            <i class="fas fa-info-circle"></i> للحصول على أفضل تجربة، تأكد من تفعيل خدمات الموقع. الخريطة تعمل عبر Google Maps.
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-prescription-bottle-alt"></i> خدمات صيدلية ذكية — اعثر على دوائك وأقرب صيدلية في ثوانٍ
+    </footer>
+</div>
+
+<!-- تنبيه المفتاح إذا لم يتم تغييره -->
+<script>
+    (function checkAPIKey() {
+        setTimeout(() => {
+            const scripts = document.getElementsByTagName('script');
+            let hasValidKey = false;
+            for(let s of scripts) {
+                if(s.src && s.src.includes('maps.googleapis.com') && !s.src.includes('YOUR_GOOGLE_MAPS_API_KEY')) {
+                    hasValidKey = true;
+                    break;
+                }
+            }
+            if (!hasValidKey && typeof google === 'undefined') {
+                const mapDiv = document.getElementById("map");
+                if(mapDiv) mapDiv.style.background = "#e9ecef";
+                console.warn("⚠️ مفتاح Google Maps API غير صالح. الرجاء إضافة مفتاح صالح في السطر الخاص بـ apiKey داخل دالة loadGoogleMapsAPI.");
+            }
+        }, 1000);
+    })();
+</script>
+</body>
+</html>
